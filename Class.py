@@ -1,5 +1,96 @@
 import pickle
 import glob
+import types
+
+
+def export_1_cake_to_html(obj, path):
+    template = """
+<table border=1>
+     <tr>
+       <th colspan=2>{}</th>
+     </tr>
+       <tr>
+         <td>Kind</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Taste</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Additives</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Filling</td>
+         <td>{}</td>
+       </tr>
+</table>"""
+    with open(path, "w") as file:
+        content = template.format(obj.name, obj.kind, obj.taste, obj.additives, obj.filling)
+        file.write(content)
+
+
+def export_all_cakes_to_html(cls, path):
+    template_header = """
+<table border=1>"""
+    template_data = """
+     <tr>
+       <th colspan=2>{}</th>
+     </tr>
+     <tr>
+         <td>Kind</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Taste</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Additives</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Filling</td>
+         <td>{}</td>
+       </tr>"""
+    template_footer = """</indent>
+</table>"""
+    with open(path, "w") as f:
+        f.write(template_header)
+        for c in cls.bakery_offer:
+            content = template_data.format(c.name, c.kind, c.taste, c.additives, c.filling)
+            f.write(content)
+        f.write(template_footer)
+
+
+def export_this_cake_to_html(self, path):
+    template = """
+<table border=1>
+     <tr>
+       <th colspan=2>{}</th>
+     </tr>
+       <tr>
+         <td>Kind</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Taste</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Additives</td>
+         <td>{}</td>
+       </tr>
+       <tr>
+         <td>Filling</td>
+         <td>{}</td>
+       </tr>
+</table>"""
+
+    with open(path, "w") as f:
+        content = template.format(self.name, self.kind, self.taste, self.additives, self.filling)
+        f.write(content)
 
 
 class Cake:
@@ -93,3 +184,14 @@ for cake in Cake.bakery_offer:
 
 cake1.save_to_file(r"C:\Users\Mikołaj\Desktop\PYT\plik.bake")
 cake5 = Cake.read_from_file(r"C:\Users\Mikołaj\Desktop\PYT\plik.bake")
+
+Cake.export_1_cake_to_html = export_1_cake_to_html
+Cake.export_1_cake_to_html(cake1, r'C:\Users\Mikołaj\Desktop\PYT\cake1.html')
+
+Cake.export_all_cakes_to_html = types.MethodType(export_all_cakes_to_html, Cake)
+Cake.export_all_cakes_to_html(r'C:\Users\Mikołaj\Desktop\PYT\cakes.html')
+
+for c in Cake.bakery_offer:
+    c.export_this_cake_to_html = types.MethodType(export_this_cake_to_html, c)
+for c in Cake.bakery_offer:
+    c.export_this_cake_to_html(r'C:\Users\Mikołaj\Desktop\PYT/{}.html'.format(c.name.replace(' ', '_')))
