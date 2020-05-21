@@ -1,6 +1,5 @@
 from typing import Callable
 
-
 def example_function(age: int, timestamp: int) -> str:
     print("7. Age {} and timestamp {}".format(age, timestamp))
     return "HEHEHEHHEHE"
