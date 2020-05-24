@@ -1,6 +1,7 @@
 import requests
 import os
 import shutil
+import urllib3.exceptions
 
 
 def save_url_to_file(url, file_path):
@@ -13,23 +14,39 @@ url = 'http://www.mobilo24.eu/spis/'
 dir = 'c:/temp/'
 tmpfile = 'download.tmp'
 file = 'spis.html'
+
 tmpfile_path = os.path.join(dir, tmpfile)
 file_path = os.path.join(dir, file)
 
-
 try:
     if os.path.exists(tmpfile_path):
-      os.remove(tmpfile_path)
-      save_url_to_file(url,tmpfile_path)
-      shutil.copy(tmpfile_path,tmpfile)
+        print('Removing {}'.format(tmpfile_path))
+        os.remove(tmpfile_path)
+
+    print('Downloading url {}'.format(url))
+    save_url_to_file(url, tmpfile_path)
+
+    print('Copying file {} {}'.format(tmpfile_path, file_path))
+    shutil.copy(tmpfile_path, file_path)
+
+except requests.exceptions.ConnectionError:
+    print('Error downloading the file. The URL {} is incorrect'.format(url))
+
+except FileNotFoundError:
+    print('File cannot be found: {}'.format(tmpfile_path))
+
+except PermissionError:
+    print('Problem accessing a file: {}'.format(file_path))
+
 except Exception as e:
-    print("Error \n {}".format(e))
+    print('General Error downloading the URL {}'.format(url))
+    print('Error details: {}'.format(e))
+
 else:
-    print("URL downloaded successfully {}".format(file))
+    print('URL downloaded successfully {}'.format(file))
+
 finally:
     if os.path.exists(tmpfile_path):
+        print('Final removal of the file {}'.format(tmpfile_path))
         os.remove(tmpfile_path)
-        print("Final removal of the file {}".format(tmpfile_path))
-    print("Done")
-
-
+    print('DONE!')
